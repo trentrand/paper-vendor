@@ -6,12 +6,12 @@
 #include "task.h"
 #include "esp8266.h"
 
-uint8_t const led_pin = 16;
+#define ONBOARD_LED_PIN 16
 
-uint8_t const configuration_a_pin = 5;
-uint8_t const configuration_b_pin = 4;
-uint8_t const configuration_c_pin = 0;
-uint8_t const configuration_d_pin = 2;
+#define DIP_A_PIN 8
+#define DIP_B_PIN 11
+#define DIP_C_PIN 7
+#define DIP_D_PIN 6
 
 void printConfigurationGroup(char* identifier, bool value) {
   char* readableValue = value ? "ON" : "OFF";
@@ -19,10 +19,10 @@ void printConfigurationGroup(char* identifier, bool value) {
 }
 
 void readConfiguration() {
-  bool configurationA = !gpio_read(configuration_a_pin);
-  bool configurationB = !gpio_read(configuration_b_pin);
-  bool configurationC = !gpio_read(configuration_c_pin);
-  bool configurationD = !gpio_read(configuration_d_pin);
+  bool configurationA = !gpio_read(DIP_A_PIN);
+  bool configurationB = !gpio_read(DIP_B_PIN);
+  bool configurationC = !gpio_read(DIP_C_PIN);
+  bool configurationD = !gpio_read(DIP_D_PIN);
 
   printConfigurationGroup("A", configurationA);
   printConfigurationGroup("B", configurationB);
@@ -32,19 +32,19 @@ void readConfiguration() {
 }
 
 void pollConfigurationTask(void *pvParameters) {
-  gpio_enable(led_pin, GPIO_OUTPUT);
-  gpio_set_pullup(configuration_a_pin, true, false);
-  gpio_set_pullup(configuration_b_pin, true, false);
-  gpio_set_pullup(configuration_c_pin, true, false);
-  gpio_set_pullup(configuration_d_pin, true, false);
+  gpio_enable(ONBOARD_LED_PIN, GPIO_OUTPUT);
+  gpio_set_pullup(DIP_A_PIN, true, false);
+  gpio_set_pullup(DIP_B_PIN, true, false);
+  gpio_set_pullup(DIP_C_PIN, true, false);
+  gpio_set_pullup(DIP_D_PIN, true, false);
 
   while(1) {
-    gpio_write(led_pin, 0);
+    gpio_write(ONBOARD_LED_PIN, 0);
     vTaskDelay(500 / portTICK_PERIOD_MS);
-    gpio_write(led_pin, 1);
+    gpio_write(ONBOARD_LED_PIN, 1);
 
     readConfiguration();
-    vTaskDelay(5000 / portTICK_PERIOD_MS);
+    vTaskDelay(25000 / portTICK_PERIOD_MS);
   }
 }
 
