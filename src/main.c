@@ -6,6 +6,9 @@
 #include "task.h"
 #include "esp8266.h"
 
+// TODO: if dev
+#include "gdbstub.h"
+
 #define ONBOARD_LED_PIN 16
 
 #define DIP_A_PIN 8
@@ -50,6 +53,10 @@ void pollConfigurationTask(void *pvParameters) {
 
 void user_init(void) {
   uart_set_baud(0, 115200);
+
+  // TODO: if dev
+  gdbstub_init();
+
   printf("SDK version:%s\n", sdk_system_get_sdk_version());
 
   xTaskCreate(pollConfigurationTask, "Poll Configuration", 256, NULL, 2, NULL);
